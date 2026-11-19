@@ -1,0 +1,1 @@
+ /home/mario/atividade1911/.dart_tool/flutter_build/b12c6bc363502e0d12380bb39f767697/link_hooks_result.json: 

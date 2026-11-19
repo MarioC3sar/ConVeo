@@ -1,0 +1,1 @@
+ /home/mario/atividade1911/.dart_tool/flutter_build/011c333dc6906ed3cd586c4eeeb439b4/build_hooks_result.json /home/mario/atividade1911/.dart_tool/hooks_runner/shared/sqlite3/build/download-0c2d3bfc/libsqlite3.so:  /home/mario/.flutter-sdk/bin/cache/dart-sdk/version /home/mario/atividade1911/.dart_tool/package_config.json /home/mario/atividade1911/pubspec.yaml
