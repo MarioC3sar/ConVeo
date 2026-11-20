@@ -1,10 +1,12 @@
 import 'package:conveo/database/database_helper.dart';
 import 'package:conveo/models/vehicle.dart';
+import 'package:conveo/repositories/fueling_repository.dart';
 
 /// Repositório para operações CRUD do veículo.
 /// Abstrai o acesso ao banco de dados para a camada de negócio.
 class VehicleRepository {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final FuelingRepository _fuelingRepository = FuelingRepository();
 
   /// Retorna o veículo cadastrado (apenas um por vez).
   Future<Vehicle?> getVehicle() async {
@@ -44,10 +46,20 @@ class VehicleRepository {
     }
   }
 
-  /// Exclui o veículo cadastrado.
-  /// Os abastecimentos associados são removidos automaticamente por ON DELETE CASCADE.
+  /// Exclui o veículo cadastrado e todos os abastecimentos associados.
+  /// Deleta explicitamente os abastecimentos antes do veículo para garantir a limpeza,
+  /// já que as foreign keys do SQLite podem não estar habilitadas em todas as conexões.
   Future<void> deleteVehicle() async {
     final db = await _dbHelper.database;
+    
+    // Primeiro, obtém todos os veículos para deletar os abastecimentos associados
+    final List<Map<String, dynamic>> vehicles = await db.query('vehicles');
+    for (final vehicle in vehicles) {
+      final vehicleId = vehicle['id'] as int;
+      await _fuelingRepository.deleteFuelingsByVehicleId(vehicleId);
+    }
+    
+    // Depois, deleta os veículos
     await db.delete('vehicles');
   }
 }

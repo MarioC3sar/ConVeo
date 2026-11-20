@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:conveo/models/vehicle.dart';
 import 'package:conveo/providers/vehicle_provider.dart';
+import 'package:conveo/providers/fueling_provider.dart';
 import 'package:conveo/services/fipe_service.dart';
 import 'package:conveo/utils/validators.dart';
 
@@ -194,11 +195,14 @@ class _VehicleScreenState extends State<VehicleScreen> {
     );
 
     if (confirm == true && mounted) {
-      final provider = context.read<VehicleProvider>();
-      final success = await provider.deleteVehicle();
+      final vehicleProvider = context.read<VehicleProvider>();
+      final fuelingProvider = context.read<FuelingProvider>();
+      final success = await vehicleProvider.deleteVehicle();
 
       if (mounted) {
         if (success) {
+          // Limpa os abastecimentos em memória para evitar dados órfãos
+          fuelingProvider.clearFuelings();
           setState(() {
             _selectedBrand = null;
             _selectedModel = null;
@@ -211,7 +215,7 @@ class _VehicleScreenState extends State<VehicleScreen> {
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(provider.error ?? 'Erro ao excluir veículo.')),
+            SnackBar(content: Text(vehicleProvider.error ?? 'Erro ao excluir veículo.')),
           );
         }
       }

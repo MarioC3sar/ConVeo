@@ -119,6 +119,15 @@ class FuelingProvider extends ChangeNotifier {
     return result;
   }
 
+  /// Limpa a lista de abastecimentos em memória.
+  /// Chamado quando o veículo é excluído para garantir que os dados antigos
+  /// não persistam na memória do provider.
+  void clearFuelings() {
+    _fuelings = [];
+    _error = null;
+    notifyListeners();
+  }
+
   /// Limpa o erro atual.
   void clearError() {
     _error = null;

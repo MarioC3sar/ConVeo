@@ -11,8 +11,12 @@ class DatabaseHelper {
   Database? _database;
 
   /// Retorna a instância do banco, inicializando se necessário.
+  /// Garante que PRAGMA foreign_keys = ON seja executado a cada acesso,
+  /// pois o SQLite desabilita foreign keys por padrão em cada conexão.
   Future<Database> get database async {
     _database ??= await _initDatabase();
+    // Garante que foreign keys estejam habilitadas em cada acesso
+    await _database!.execute('PRAGMA foreign_keys = ON');
     return _database!;
   }
 
@@ -26,6 +30,9 @@ class DatabaseHelper {
       version: Constants.databaseVersion,
       onCreate: _onCreate,
     );
+
+    // Habilita as foreign keys para que ON DELETE CASCADE funcione
+    await db.execute('PRAGMA foreign_keys = ON');
 
     return db;
   }
